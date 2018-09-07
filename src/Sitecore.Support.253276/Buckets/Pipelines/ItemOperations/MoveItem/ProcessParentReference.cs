@@ -26,9 +26,19 @@ namespace Sitecore.Support.Buckets.Pipelines.ItemOperations.MoveItem
     {
       using (new SecurityDisabler())
       {
-        using (new EditContext(itemToProcess))
+        if (itemToProcess.Versions.Count > 0)
         {
-          itemToProcess[ParentReferenceFieldId] = string.Empty;
+          using (new EditContext(itemToProcess))
+          {
+            itemToProcess[ParentReferenceFieldId] = string.Empty;
+          }
+        }
+        else
+        {
+          using (new EditContext(itemToProcess, false, false))
+          {
+            itemToProcess[ParentReferenceFieldId] = string.Empty;
+          }
         }
       }
       foreach (Item item in itemToProcess.GetChildren(ChildListOptions.SkipSorting | ChildListOptions.IgnoreSecurity))
